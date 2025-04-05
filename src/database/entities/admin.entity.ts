@@ -11,10 +11,10 @@ export class AdminEntity {
   @PrimaryGeneratedColumn('uuid')
   uid: string;
 
-  @Column({ type: 'varchar', nullable: true })
-  email: string | null;
-
   @Column({ type: 'varchar' })
+  email: string;
+
+  @Column({ type: 'varchar', select: false })
   password: string;
 
   @CreateDateColumn()

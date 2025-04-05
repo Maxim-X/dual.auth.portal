@@ -6,6 +6,9 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import dbConfiguration from './database/config/mysql.config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { SessionEntity } from './database/entities/session.entity';
+import { UserModule } from './modules/user/user.module';
+import { SessionAuthGuard } from './modules/auth/guards/session-auth.guard';
+import { APP_GUARD } from '@nestjs/core';
 
 @Module({
   imports: [
@@ -19,8 +22,15 @@ import { SessionEntity } from './database/entities/session.entity';
     }),
     TypeOrmModule.forFeature([SessionEntity]),
     AuthModule,
+    UserModule,
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    {
+      provide: APP_GUARD,
+      useClass: SessionAuthGuard,
+    },
+    AppService,
+  ],
 })
 export class AppModule {}

@@ -11,13 +11,13 @@ export class UserEntity {
   @PrimaryGeneratedColumn('uuid')
   uid: string;
 
-  @Column({ type: 'varchar', nullable: true })
-  login: string | null;
-
-  @Column({ type: 'varchar', nullable: true })
-  email: string | null;
+  @Column({ type: 'varchar' })
+  login: string;
 
   @Column({ type: 'varchar' })
+  email: string;
+
+  @Column({ type: 'varchar', select: false })
   password: string;
 
   @Column({ default: false })

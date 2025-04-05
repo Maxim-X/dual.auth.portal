@@ -5,12 +5,13 @@ import { AppHttpResponse } from '../../../../shared/utils/AppHttpResponse';
 import { SignupResponseInterface } from '../../interfaces/user/signup-response.interface';
 import { UserEntity } from '../../../../database/entities/user.entity';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Equal, Repository } from 'typeorm';
 import * as bcrypt from 'bcryptjs';
 import { GeneralAuthService } from '../general-auth/general-auth.service';
 import { RoleEnum } from '../../enum/role.enum';
 import { LoginDto } from '../../dto/user/login.dto';
 import { LoginResponseInterface } from '../../interfaces/user/login-response.interface';
+import { FindOptionsWhere } from 'typeorm/find-options/FindOptionsWhere';
 
 @Injectable()
 export class UserAuthService {
@@ -23,13 +24,6 @@ export class UserAuthService {
   public async signup(
     signupDto: SignupDto,
   ): Promise<AppHttpResponse<SignupResponseInterface>> {
-    if (!signupDto.email && !signupDto.login) {
-      throw new AppHttpException(
-        'Должен быть указан логин или email.',
-        'Должен быть указан логин или email.',
-      );
-    }
-
     const checkExistsUser = await this.userRepository.exists({
       where: {
         email: signupDto.email,
@@ -66,11 +60,25 @@ export class UserAuthService {
   public async login(
     loginDto: LoginDto,
   ): Promise<AppHttpResponse<LoginResponseInterface>> {
+    const findOptionsWhere: FindOptionsWhere<UserEntity>[] = [];
+    if (loginDto.login) {
+      findOptionsWhere.push({
+        login: Equal(loginDto.login),
+      });
+    }
+
+    if (loginDto.email) {
+      findOptionsWhere.push({
+        email: Equal(loginDto.email),
+      });
+    }
+
     const user: UserEntity | null = await this.userRepository.findOne({
-      where: {
-        login: loginDto.login,
-        email: loginDto.email,
+      select: {
+        uid: true,
+        password: true,
       },
+      where: findOptionsWhere,
     });
 
     if (user === null) {

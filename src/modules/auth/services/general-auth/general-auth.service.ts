@@ -1,13 +1,15 @@
-import { HttpStatus, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { CreateSessionDto } from '../../dto/general/create-session.dto';
 import { CreateSessionInterface } from '../../interfaces/general/create-session.interface';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Equal, Repository } from 'typeorm';
 import { SessionEntity } from '../../../../database/entities/session.entity';
 import * as moment from 'moment-timezone';
 import { ConfigService } from '@nestjs/config';
 import { sign as jwtSign } from 'jsonwebtoken';
 import { AppHttpException } from '../../../../shared/utils/AppHttpException';
+import { LogoutDto } from '../../dto/general/logout.dto';
+import { AppHttpResponse } from '../../../../shared/utils/AppHttpResponse';
 
 @Injectable()
 export class GeneralAuthService {
@@ -51,5 +53,15 @@ export class GeneralAuthService {
     );
 
     return { jwtToken };
+  }
+
+  public async logout(logoutDto: LogoutDto): Promise<AppHttpResponse<object>> {
+    await this.sessionRepository.update(
+      {
+        uid: Equal(logoutDto.sessionUid),
+      },
+      { is_force_expired: true },
+    );
+    return new AppHttpResponse('Ok', 'Ok', {});
   }
 }

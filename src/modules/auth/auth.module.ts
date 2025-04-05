@@ -7,12 +7,16 @@ import { UserEntity } from '../../database/entities/user.entity';
 import { AdminEntity } from '../../database/entities/admin.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { SessionEntity } from '../../database/entities/session.entity';
+import { AdminAuthService } from './services/admin-auth/admin-auth.service';
+import { ConfigModule } from '@nestjs/config';
+import { GeneralAuthController } from './controllers/general-auth/general-auth.controller';
 
 @Module({
   imports: [
+    ConfigModule,
     TypeOrmModule.forFeature([UserEntity, AdminEntity, SessionEntity]),
   ],
-  controllers: [AdminAuthController, UserAuthController],
-  providers: [UserAuthService, GeneralAuthService],
+  controllers: [AdminAuthController, UserAuthController, GeneralAuthController],
+  providers: [UserAuthService, GeneralAuthService, AdminAuthService],
 })
 export class AuthModule {}

@@ -9,14 +9,10 @@ import { AppHttpException } from '../../../shared/utils/AppHttpException';
 import { verify as jwtVerify } from 'jsonwebtoken';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Equal, Repository } from 'typeorm';
-import { SessionEntity } from 'src/database/entities/session.entity';
 import * as moment from 'moment-timezone';
-
-export interface JwtPayload {
-  sessionUid: string;
-  profileUid: string;
-  role: string;
-}
+import { extractAuthTokenFromHeader } from '../../../shared/functions/extract-auth-token-from-header';
+import { PayloadSessionInterface } from '../interfaces/general/payload-session.interface';
+import { SessionEntity } from '../../../database/entities/session.entity';
 
 @Injectable()
 export class SessionAuthGuard implements CanActivate {
@@ -28,7 +24,12 @@ export class SessionAuthGuard implements CanActivate {
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest<Request>();
-    const token = this.extractTokenFromHeader(request);
+
+    if (request.url.startsWith('/api/auth/')) {
+      return true;
+    }
+
+    const token = extractAuthTokenFromHeader(request);
 
     if (token === null) {
       throw new AppHttpException(
@@ -49,9 +50,9 @@ export class SessionAuthGuard implements CanActivate {
       );
     }
 
-    let payload: JwtPayload;
+    let payload: PayloadSessionInterface;
     try {
-      payload = jwtVerify(token, jwtSecret) as JwtPayload;
+      payload = jwtVerify(token, jwtSecret) as PayloadSessionInterface;
     } catch (error) {
       console.error('Ошибка проверки JWT:', error);
       throw new AppHttpException(
@@ -84,23 +85,5 @@ export class SessionAuthGuard implements CanActivate {
     }
 
     return true;
-  }
-
-  private extractTokenFromHeader(request: Request): string | null {
-    const authorizationHeader: string | undefined = request.headers?.[
-      'Authorization'
-    ] as string | undefined;
-
-    if (typeof authorizationHeader !== 'string') {
-      return null;
-    }
-
-    const tokenParts = authorizationHeader.split(' ');
-    if (tokenParts.length !== 2) {
-      return null; // Неверный формат заголовка
-    }
-
-    const token = tokenParts[1];
-    return token ?? null;
   }
 }

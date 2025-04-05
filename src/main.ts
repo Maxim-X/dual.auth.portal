@@ -11,7 +11,6 @@ async function bootstrap() {
   app.enableCors();
   app.useGlobalPipes(new ValidationPipe());
   app.setGlobalPrefix('/api/');
-
   await app.listen(configService.get<number>('APP_PORT') ?? 3000);
 }
 bootstrap().catch((err) => {
