@@ -35,15 +35,15 @@ export class GeneralAuthService {
       this.configService.get<string>('JWT_SECRET');
     if (jwtSecret === undefined) {
       throw new AppHttpException(
-        'Invalid JWT_SECRET',
+        'Invalid JWT_SECRET.',
         'Возникла техническая неполадка. Пожалуйста, повторите попытку. Если ошибка повторится — свяжитесь с нашей службой поддержки!',
-        HttpStatus.UNAUTHORIZED,
       );
     }
 
     const jwtToken: string = jwtSign(
       {
         sessionUid: session.uid,
+        profileUid: createSessionDto.profile_uid,
         role: session.role,
       },
       jwtSecret,

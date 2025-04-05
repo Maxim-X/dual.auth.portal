@@ -5,6 +5,7 @@ import { AuthModule } from './modules/auth/auth.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import dbConfiguration from './database/config/mysql.config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { SessionEntity } from './database/entities/session.entity';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
         timeout: 30000,
       }),
     }),
+    TypeOrmModule.forFeature([SessionEntity]),
     AuthModule,
   ],
   controllers: [AppController],
