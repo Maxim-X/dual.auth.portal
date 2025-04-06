@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { GetUsersDto } from './dto/get-users.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { UserEntity } from '../../database/entities/user.entity';
-import { ILike, Repository } from 'typeorm';
+import { Like, Repository } from 'typeorm';
 import { FindOptionsWhere } from 'typeorm/find-options/FindOptionsWhere';
 import { AppHttpResponse } from '../../shared/utils/AppHttpResponse';
 import { GetUsersResponseInterface } from './interfaces/get-users-response.interface';
@@ -19,11 +19,11 @@ export class AdminService {
   ): Promise<AppHttpResponse<GetUsersResponseInterface>> {
     const findOptionsWhere: FindOptionsWhere<UserEntity> = {};
     if (getUsersDto.login) {
-      findOptionsWhere.login = ILike(getUsersDto.login);
+      findOptionsWhere.login = Like(`%${getUsersDto.login}%`);
     }
 
     if (getUsersDto.email) {
-      findOptionsWhere.email = ILike(getUsersDto.email);
+      findOptionsWhere.email = Like(`%${getUsersDto.email}%`);
     }
 
     const skip =

@@ -1,3 +1,7 @@
+## Postman
+```
+$ https://app.getpostman.com/join-team?invite_code=fce1a0e0f816ecaf3cc0fb75c770febe97dc7a097ab9a0bd4eab3ea5a9df873a&target_code=e171ce6ba45ab9fbcb77dd1ba437f85e
+```
 ## Регистрация администратора через CLI
 ```bash
 $ ts-node cli.ts create-user test@example.com mySecurePassword123

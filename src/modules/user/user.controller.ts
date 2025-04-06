@@ -5,6 +5,7 @@ import { AppHttpResponse } from '../../shared/utils/AppHttpResponse';
 import { InitResponseInterface } from './interfaces/init-response.interface';
 import { ProfileUidDecorator } from '../auth/decorators/profile-uid.decorator';
 import { SessionAuthGuard } from '../auth/guards/session-auth.guard';
+import { RoleEnum } from '../auth/enum/role.enum';
 
 @Controller('/user')
 @UseGuards(SessionAuthGuard)
@@ -14,7 +15,7 @@ export class UserController {
   @Get('/init')
   private async init(
     @Query() initHttpDto: InitHttpDto,
-    @ProfileUidDecorator() profileUid: string,
+    @ProfileUidDecorator(RoleEnum.USER) profileUid: string,
   ): Promise<AppHttpResponse<InitResponseInterface>> {
     return await this.userService.init({
       ...initHttpDto,
