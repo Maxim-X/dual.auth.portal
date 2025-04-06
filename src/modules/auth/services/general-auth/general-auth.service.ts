@@ -10,6 +10,7 @@ import { sign as jwtSign } from 'jsonwebtoken';
 import { AppHttpException } from '../../../../shared/utils/AppHttpException';
 import { LogoutDto } from '../../dto/general/logout.dto';
 import { AppHttpResponse } from '../../../../shared/utils/AppHttpResponse';
+import { RoleEnum } from '../../enum/role.enum';
 
 @Injectable()
 export class GeneralAuthService {
@@ -34,7 +35,10 @@ export class GeneralAuthService {
       await this.sessionRepository.save(newSession);
 
     const jwtSecret: string | undefined =
-      this.configService.get<string>('JWT_SECRET');
+      createSessionDto.role === RoleEnum.ADMIN
+        ? this.configService.get<string>('JWT_SECRET_ADMIN')
+        : this.configService.get<string>('JWT_SECRET');
+
     if (jwtSecret === undefined) {
       throw new AppHttpException(
         'Invalid JWT_SECRET.',

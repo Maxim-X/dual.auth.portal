@@ -4,8 +4,10 @@ import { InitHttpDto } from './dto/init.dto';
 import { AppHttpResponse } from '../../shared/utils/AppHttpResponse';
 import { InitResponseInterface } from './interfaces/init-response.interface';
 import { ProfileUidDecorator } from '../auth/decorators/profile-uid.decorator';
+import { SessionAuthGuard } from '../auth/guards/session-auth.guard';
 
 @Controller('/user')
+@UseGuards(SessionAuthGuard)
 export class UserController {
   constructor(private readonly userService: UserService) {}
 

@@ -9,7 +9,7 @@ async function bootstrap() {
   const configService = app.get(ConfigService);
   app.set('trust proxy', 1);
   app.enableCors();
-  app.useGlobalPipes(new ValidationPipe());
+  app.useGlobalPipes(new ValidationPipe({ transform: true }));
   app.setGlobalPrefix('/api/');
   await app.listen(configService.get<number>('APP_PORT') ?? 3000);
 }

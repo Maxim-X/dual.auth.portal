@@ -1,11 +1,11 @@
 import { IsEmail, IsNotEmpty, IsString } from 'class-validator';
 
 export class LoginDto {
-  @IsNotEmpty({ message: 'Email не должен быть пустым' })
-  @IsEmail({}, { message: 'Неверный формат email' })
+  @IsNotEmpty({ message: 'email: Email не должен быть пустым' })
+  @IsEmail({}, { message: 'email: Неверный формат email' })
   email: string;
 
-  @IsNotEmpty({ message: 'Пароль не должен быть пустым' })
-  @IsString({ message: 'Пароль должен быть строкой' })
+  @IsNotEmpty({ message: 'password: Пароль не должен быть пустым' })
+  @IsString({ message: 'password: Пароль должен быть строкой' })
   password: string;
 }

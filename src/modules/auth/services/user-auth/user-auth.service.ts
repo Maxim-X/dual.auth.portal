@@ -25,10 +25,7 @@ export class UserAuthService {
     signupDto: SignupDto,
   ): Promise<AppHttpResponse<SignupResponseInterface>> {
     const checkExistsUser = await this.userRepository.exists({
-      where: {
-        email: signupDto.email,
-        login: signupDto.login,
-      },
+      where: [{ email: signupDto.email }, { login: signupDto.login }],
     });
 
     if (checkExistsUser) {

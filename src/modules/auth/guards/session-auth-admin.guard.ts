@@ -1,8 +1,8 @@
 import {
-  Injectable,
   CanActivate,
   ExecutionContext,
   HttpStatus,
+  Injectable,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { AppHttpException } from '../../../shared/utils/AppHttpException';
@@ -16,7 +16,7 @@ import { SessionEntity } from '../../../database/entities/session.entity';
 import { RoleEnum } from '../enum/role.enum';
 
 @Injectable()
-export class SessionAuthGuard implements CanActivate {
+export class SessionAuthAdminGuard implements CanActivate {
   constructor(
     private readonly configService: ConfigService,
     @InjectRepository(SessionEntity)
@@ -25,10 +25,10 @@ export class SessionAuthGuard implements CanActivate {
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest<Request>();
-    const authHeader: unknown = request.headers?.['authorization'];
+    const authHeader: unknown = request.headers?.['authorization-admin'];
     if (typeof authHeader !== 'string') {
       throw new AppHttpException(
-        'Отсутствует JWT-токен в заголовке Authorization',
+        'Отсутствует JWT-токен в заголовке',
         'Срок действия токена истек. Пожалуйста, выполните вход в систему заново.',
         HttpStatus.UNAUTHORIZED,
       );
@@ -38,14 +38,14 @@ export class SessionAuthGuard implements CanActivate {
 
     if (token === null) {
       throw new AppHttpException(
-        'Отсутствует JWT-токен в заголовке Authorization',
+        'Отсутствует JWT-токен в заголовке',
         'Срок действия токена истек. Пожалуйста, выполните вход в систему заново.',
         HttpStatus.UNAUTHORIZED,
       );
     }
 
     const jwtSecret: string | undefined =
-      this.configService.get<string>('JWT_SECRET');
+      this.configService.get<string>('JWT_SECRET_ADMIN');
 
     if (jwtSecret === undefined) {
       throw new AppHttpException(
@@ -70,7 +70,7 @@ export class SessionAuthGuard implements CanActivate {
     const session: SessionEntity | null = await this.sessionRepository.findOne({
       where: {
         uid: Equal(payload.sessionUid),
-        role: Equal(RoleEnum.USER),
+        role: Equal(RoleEnum.ADMIN),
       },
     });
 
